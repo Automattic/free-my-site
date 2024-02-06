@@ -3,11 +3,13 @@
 namespace DotOrg\FreeMySite\Storage;
 
 class Store {
+	const POST_TYPE = 'freemysite_instance';
+
 	public function __construct() {
 		add_action(
-			'init', function () {
+			'init', function() {
 			register_post_type(
-				'freemysite_instance', array(
+				self::POST_TYPE, array(
 					'labels'              => array(
 						'name'          => __( 'Free My Site Import Instances' ),
 						'singular_name' => __( 'Free My Site Import Instance' )
@@ -23,19 +25,20 @@ class Store {
 		);
 	}
 
-	public static function new_instance( $site_url, $markdown_guide ) {
+	public static function new_instance( $site_url, $cms, $markdown_guide ) {
 		$instance_id = self::generate_instance_id();
 		$post_id     = wp_insert_post(
 			array(
-				'post_type'   => 'freemysite_instance',
-				'post_status' => 'publish',
-				'post_title'  => 'Instance ' . $instance_id,
+				'post_type'    => self::POST_TYPE,
+				'post_status'  => 'publish',
+				'post_title'   => 'Instance ' . $instance_id,
 				'post_content' => $markdown_guide
 			)
 		);
 
 		if ( $post_id ) {
 			update_post_meta( $post_id, 'instance_id', $instance_id );
+			update_post_meta( $post_id, 'cms', $cms );
 			update_post_meta( $post_id, 'site_url', $site_url );
 			return $instance_id;
 		}
@@ -52,6 +55,41 @@ class Store {
 			$instance_id .= $characters[ rand( 0, strlen( $characters ) - 1 ) ];
 		}
 		return $instance_id;
+	}
+
+	public static function get_instance_details( $instance_id ) {
+		$post_id = self::get_post_id_by_instance_id( $instance_id );
+		if ( false === $post_id ) {
+			return [];
+		}
+
+		return [
+			'cms'            => get_post_meta( $post_id, 'cms', true ),
+			'site_url'       => get_post_meta( $post_id, 'site_url', true ),
+			'markdown_guide' => get_post( $post_id )->post_content
+		];
+	}
+
+	private static function get_post_id_by_instance_id( $instance_id ) {
+		$posts = get_posts( array(
+			'post_type'   => self::POST_TYPE,
+			'post_status' => 'publish',
+			'meta_query'  => array(
+				array(
+					'key'     => 'instance_id',
+					'value'   => $instance_id,
+					'compare' => '=',
+				),
+			),
+			'fields'      => 'ids', // Return only post IDs
+			'numberposts' => 1, // Limit the query to one post
+		) );
+
+		if ( empty( $posts ) ) {
+			return false;
+		}
+
+		return $posts[ 0 ];
 	}
 
 }
