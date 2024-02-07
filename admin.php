@@ -171,7 +171,7 @@ class AdminUI {
 	public function handle_form_submission() {
 		global $pagenow;
 
-		if ( $pagenow != 'tools.php' || $_GET[ 'page' ] != self::ADMIN_PAGE_SLUG ) {
+		if ( $pagenow != 'tools.php' || ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] != self::ADMIN_PAGE_SLUG ) ) {
 			return; // no business
 		}
 
