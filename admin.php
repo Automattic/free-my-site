@@ -139,6 +139,7 @@ class AdminUI {
 
             #free-my-site-accordion img {
                 max-width: 100%;
+                border: solid 1px #CCCCCC;
             }
         </style>
 		<?php
