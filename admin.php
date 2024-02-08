@@ -86,13 +86,13 @@ class AdminUI {
 			<?php do_action( 'admin_notices' ) ?>
 			<?php if ( ! empty( $details ) ) { ?>
 				<p>Let's follow the guide shown below:</p>
-				<?php $this->display_steps( GuideSourcing\parse_guide( $details[ 'markdown_guide' ] ) ); ?>
+				<?php $this->display_steps( GuideSourcing\parse_guide( $details[ 'markdown_guide' ] ), $details ); ?>
 			<?php } ?>
 		</div>
 		<?php
 	}
 
-	public function display_steps( $parsed_guide ) {
+	public function display_steps( $parsed_guide, $instance_details ) {
 		?>
 		<div id="free-my-site-accordion">
 			<?php
@@ -103,7 +103,7 @@ class AdminUI {
 						<div class="accordion-section">
 							<div class="section-heading">
 								<h3><?php echo esc_html( $section[ 'heading_content' ] ) ?></h3>
-								<?php $this->present_assist_options( $section, $index, $parsed_guide ); ?>
+								<?php $this->present_assist_options( $section, $index, $parsed_guide, $instance_details ); ?>
 							</div>
 							<div class="section-content">
 								<?php echo $this->markdown_parser->text( $section[ 'section_content' ] ); ?>
@@ -168,13 +168,35 @@ class AdminUI {
 		<?php
 	}
 
-	public function present_assist_options( $section, $index, $guide ) {
-		if ( strpos( $section[ 'heading_content' ], 'Install' ) ) { ?>
-			<input type="button" value="✨ Auto-install this plugin"
-				   class="button button-primary"/>
-		<?php } else if ( strpos( $section[ 'heading_content' ], 'Export' ) ) { ?>
-			↗️ &nbsp;<a target="_blank" class="" href="">Visit Export page</a>
-		<?php }
+	public function present_assist_options( $section, $index, $parsed_guide, $instance_details ) {
+		$cms      = strtolower( $instance_details[ 'cms' ] );
+		$site_url = $instance_details[ 'site_url' ];
+
+		if ( strpos( $section[ 'heading_content' ], 'Export' ) ) {
+
+			switch ( $cms ) {
+				case 'wordpress':
+					$export_page_link = $site_url . '/wp-admin/export.php';
+					break;
+				default:
+					$export_page_link = '';
+			}
+			?>
+			↗️ &nbsp;<a href="<?php echo esc_url( $export_page_link ) ?>" target="_blank">
+				<strong><?php echo __( 'Visit Export page', 'free-my-site' ) ?></strong>
+			</a>
+			<?php
+
+		} else if ( strpos( $section[ 'heading_content' ], 'Install' ) ) {
+			// figure out which plugin
+
+			// check if already installed
+
+			// show option of installing it
+			?>
+			<input type="button" value="✨ Auto-install this plugin" class="button button-primary"/>
+			<?php
+		}
 	}
 
 	public function admin_page_default() {
