@@ -100,9 +100,14 @@ class AdminUI {
 				if ( $section[ 'heading_level' ] === 2 ) {
 					if ( strpos( $section[ 'heading_content' ], 'Step' ) === 0 ) {
 						?>
-                        <h3 onclick="toggleSection(this)"><?php echo esc_html( $section[ 'heading_content' ] ) ?></h3>
-                        <div style="<?php echo $index === 0 ? '' : 'display:none;'; ?>">
-							<?php echo $this->markdown_parser->text( $section[ 'section_content' ] ); ?>
+                        <div class="accordion-section">
+                            <div class="section-heading">
+                                <h3><?php echo esc_html( $section[ 'heading_content' ] ) ?></h3>
+								<?php $this->present_assist_options( $section, $index, $parsed_guide ); ?>
+                            </div>
+                            <div class="section-content">
+								<?php echo $this->markdown_parser->text( $section[ 'section_content' ] ); ?>
+                            </div>
                         </div>
 						<?php
 					}
@@ -111,38 +116,64 @@ class AdminUI {
 			?>
         </div>
         <script type="text/javascript">
-            function toggleSection(header) {
-                // hide all but clicked upon section
-                document.querySelectorAll('#free-my-site-accordion h3').forEach(function (h3Element) {
-                    if (header !== h3Element) {
-                        h3Element.nextElementSibling.style.display = 'none';
-                    }
+            document.addEventListener('DOMContentLoaded', function () {
+                const sectionHeadings = document.querySelectorAll('#free-my-site-accordion .section-heading');
+                sectionHeadings.forEach(function (sectionHeading) {
+                    sectionHeading.addEventListener('click', function (event) {
+                        // Ignore if its one of the assistance element that we offer
+                        if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'A') {
+                            sectionHeadings.forEach(function (sectionHeading) {
+                                sectionHeading.nextElementSibling.style.display = 'none';
+                            });
+                            if (sectionHeading.nextElementSibling.style.display === 'block') {
+                                sectionHeading.nextElementSibling.style.display = 'none';
+                            } else {
+                                sectionHeading.nextElementSibling.style.display = 'block';
+                            }
+                        }
+                    });
                 });
-                // toggle the clicked upon section
-                const content = header.nextElementSibling;
-                if (content.style.display === "block") {
-                    content.style.display = "none";
-                } else {
-                    content.style.display = "block";
-                }
-            }
-
-            // open first section, on page load
-            document.getElementById('free-my-site-accordion').firstElementChild.click();
+            });
         </script>
         <style>
-            #free-my-site-accordion h3 {
+            #free-my-site-accordion .accordion-section {
+                margin: 5px 0;
+                padding: 5px;
+                border: solid 1px #CCCCCC;
+            }
+            #free-my-site-accordion .section-heading {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
                 background: #CCC;
-                padding: 7px 12px;
+                padding: 7px 15px;
                 cursor: pointer;
             }
-
+            #free-my-site-accordion .section-heading h3 {
+                flex: 1;
+                margin-right: 10px;
+            }
+            #free-my-site-accordion .section-heading .assist {
+                width: auto;
+            }
+            #free-my-site-accordion .section-content {
+                display: none;
+            }
             #free-my-site-accordion img {
                 max-width: 100%;
-                border: solid 1px #CCCCCC;
+                border: solid 2px #CCCCCC;
             }
         </style>
 		<?php
+	}
+
+	public function present_assist_options( $section, $index, $guide ) {
+		if ( strpos( $section[ 'heading_content' ], 'Install' ) ) { ?>
+            <input type="button" value="✨ Auto-install this plugin"
+                   class="button button-primary"/>
+		<?php } else if ( strpos( $section[ 'heading_content' ], 'Export' ) ) { ?>
+            ↗️ &nbsp;<a target="_blank" href="">Visit Export page</a>
+		<?php }
 	}
 
 	public function admin_page_default() {
