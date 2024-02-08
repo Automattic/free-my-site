@@ -81,41 +81,41 @@ class AdminUI {
 			$this->add_admin_notice( 'Your website <code>' . $details[ 'site_url' ] . '</code> is hosted on <strong>' . $details[ 'cms' ] . '</strong> platform.', 'info' );
 		}
 		?>
-        <div class="wrap">
-            <h2>Free My Site</h2>
+		<div class="wrap">
+			<h2>Free My Site</h2>
 			<?php do_action( 'admin_notices' ) ?>
 			<?php if ( ! empty( $details ) ) { ?>
-                <p>Let's follow the guide shown below:</p>
+				<p>Let's follow the guide shown below:</p>
 				<?php $this->display_steps( GuideSourcing\parse_guide( $details[ 'markdown_guide' ] ) ); ?>
 			<?php } ?>
-        </div>
+		</div>
 		<?php
 	}
 
 	public function display_steps( $parsed_guide ) {
 		?>
-        <div id="free-my-site-accordion">
+		<div id="free-my-site-accordion">
 			<?php
 			foreach ( $parsed_guide as $index => $section ) {
 				if ( $section[ 'heading_level' ] === 2 ) {
 					if ( strpos( $section[ 'heading_content' ], 'Step' ) === 0 ) {
 						?>
-                        <div class="accordion-section">
-                            <div class="section-heading">
-                                <h3><?php echo esc_html( $section[ 'heading_content' ] ) ?></h3>
+						<div class="accordion-section">
+							<div class="section-heading">
+								<h3><?php echo esc_html( $section[ 'heading_content' ] ) ?></h3>
 								<?php $this->present_assist_options( $section, $index, $parsed_guide ); ?>
-                            </div>
-                            <div class="section-content">
+							</div>
+							<div class="section-content">
 								<?php echo $this->markdown_parser->text( $section[ 'section_content' ] ); ?>
-                            </div>
-                        </div>
+							</div>
+						</div>
 						<?php
 					}
 				}
 			}
 			?>
-        </div>
-        <script type="text/javascript">
+		</div>
+		<script type="text/javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 const sectionHeadings = document.querySelectorAll('#free-my-site-accordion .section-heading');
                 sectionHeadings.forEach(function (sectionHeading) {
@@ -134,13 +134,14 @@ class AdminUI {
                     });
                 });
             });
-        </script>
-        <style>
+		</script>
+		<style>
             #free-my-site-accordion .accordion-section {
                 margin: 5px 0;
                 padding: 5px;
                 border: solid 1px #CCCCCC;
             }
+
             #free-my-site-accordion .section-heading {
                 display: flex;
                 flex-direction: row;
@@ -149,53 +150,53 @@ class AdminUI {
                 padding: 7px 15px;
                 cursor: pointer;
             }
+
             #free-my-site-accordion .section-heading h3 {
                 flex: 1;
                 margin-right: 10px;
             }
-            #free-my-site-accordion .section-heading .assist {
-                width: auto;
-            }
+
             #free-my-site-accordion .section-content {
                 display: none;
             }
+
             #free-my-site-accordion img {
                 max-width: 100%;
                 border: solid 2px #CCCCCC;
             }
-        </style>
+		</style>
 		<?php
 	}
 
 	public function present_assist_options( $section, $index, $guide ) {
 		if ( strpos( $section[ 'heading_content' ], 'Install' ) ) { ?>
-            <input type="button" value="✨ Auto-install this plugin"
-                   class="button button-primary"/>
+			<input type="button" value="✨ Auto-install this plugin"
+				   class="button button-primary"/>
 		<?php } else if ( strpos( $section[ 'heading_content' ], 'Export' ) ) { ?>
-            ↗️ &nbsp;<a target="_blank" href="">Visit Export page</a>
+			↗️ &nbsp;<a target="_blank" class="" href="">Visit Export page</a>
 		<?php }
 	}
 
 	public function admin_page_default() {
 		$whatcms_api_key_supplied = defined( 'WHATCMS_API_KEY' ) && ! empty( WHATCMS_API_KEY );
 		?>
-        <div class="wrap">
-            <h2>Free My Site</h2>
+		<div class="wrap">
+			<h2>Free My Site</h2>
 			<?php do_action( 'admin_notices' ); ?>
-            <br/><br/>
-            <form method="POST" action="">
+			<br/><br/>
+			<form method="POST" action="">
 				<?php wp_nonce_field( 'free_my_site_input', 'nonce' ); ?>
-                <label for="site_url">Enter your website URL:</label>
-                <input type="text" name="site_url" id="site_url" value="<?php
+				<label for="site_url">Enter your website URL:</label>
+				<input type="text" name="site_url" id="site_url" value="<?php
 				echo ! empty( $_REQUEST[ 'site_url' ] ) ? esc_url( $_REQUEST[ 'site_url' ] ) : ''; ?>"
-                       required>
-                <p class="submit">
-                    <input type="submit" name="submit_url" <?php
+					   required>
+				<p class="submit">
+					<input type="submit" name="submit_url" <?php
 					echo $whatcms_api_key_supplied ? '' : 'disabled' ?> class="button button-primary"
-                           value="Submit">
-                </p>
-            </form>
-        </div>
+						   value="Submit">
+				</p>
+			</form>
+		</div>
 		<?php
 	}
 
