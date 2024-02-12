@@ -5,6 +5,7 @@ namespace DotOrg\FreeMySite\UI;
 use DotOrg\FreeMySite;
 use DotOrg\FreeMySite\CMSDetection\Whatcms_Detector;
 use DotOrg\FreeMySite\GuideSourcing;
+use DotOrg\FreeMySite\Plugin\Manager;
 use DotOrg\FreeMySite\Storage\Store;
 
 class AdminUI {
@@ -187,15 +188,34 @@ class AdminUI {
 			</a>
 			<?php
 
-		} else if ( strpos( $section[ 'heading_content' ], 'Install' ) ) {
+		} else if ( stripos( $section[ 'heading_content' ], 'Install' ) ) {
+
 			// figure out which plugin
+			if ( strpos( $section[ 'heading_content' ], 'WordPress Importer' ) ) {
+				$plugin_slug = 'wordpress-importer';
+			}
 
-			// check if already installed
+			if ( empty( $plugin_slug ) ) {
+				return;
+			}
 
-			// show option of installing it
-			?>
-			<input type="button" value="✨ Auto-install this plugin" class="button button-primary"/>
-			<?php
+			$plugin_manager = new Manager();
+			if ( $plugin_manager->is_installed( $plugin_slug ) ) {
+				?>✅ Already installed!<?php
+			} else {
+				$install_link = $plugin_manager->get_install_link( $plugin_slug );
+				?>
+				✨ &nbsp;<a target="_blank" href="<?php echo $install_link ?>"><strong>Install this plugin</strong></a>
+				<?php
+			}
+		} else if ( false !== stripos( $section[ 'heading_content' ], 'Upload' ) ) {
+			if ( false !== stripos( $section[ 'heading_content' ], 'WXR' ) ) {
+				?>🔼 &nbsp;<a target="_blank" href="<?php echo admin_url( 'admin.php?import=wordpress' ) ?>"><strong>Upload
+						WXR</strong></a><?php
+			} else {
+				?><a href="<?php echo admin_url( 'admin.php?import=wordpress' ) ?>"></a><?php
+			}
+
 		}
 	}
 

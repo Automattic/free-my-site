@@ -13,6 +13,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'storage.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'cms-detection.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'guide-sourcing.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'guide-parsing.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'plugin-manager.php' );
 
 use DotOrg\FreeMySite\UI;
 
