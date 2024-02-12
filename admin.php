@@ -134,6 +134,15 @@ class AdminUI {
                         }
                     });
                 });
+
+                // open the current step's accordion
+                const urlsp = new URLSearchParams(window.location.search);
+                const step = parseInt(urlsp.get('step')) || 1;
+                document.querySelectorAll('#free-my-site-accordion .section-heading').forEach(function (element, index) {
+                    if (index + 1 === step) {
+                        element.dispatchEvent(new MouseEvent('click'));
+                    }
+                });
             });
 		</script>
 		<style>
