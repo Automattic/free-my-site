@@ -57,6 +57,30 @@ class Store {
 		return $instance_id;
 	}
 
+	public static function has_instances() : bool {
+		return ! empty( self::get_all_instances() );
+	}
+
+	public static function get_all_instances() : array {
+		$instances = get_posts( array(
+			'post_type'      => self::POST_TYPE,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1
+		) );
+
+		$collect = [];
+		foreach ( $instances as $instance ) {
+			$collect[] = array(
+				'id'          => $instance->ID,
+				'instance_id' => get_post_meta( $instance->ID, 'instance_id', true ),
+				'site_url'    => get_post_meta( $instance->ID, 'site_url', true ),
+				'cms'         => get_post_meta( $instance->ID, 'cms', true )
+			);
+		}
+
+		return $collect;
+	}
+
 	public static function get_instance_details( $instance_id ) : array {
 		$post_id = self::get_post_id_by_instance_id( $instance_id );
 		if ( false === $post_id ) {
@@ -92,6 +116,16 @@ class Store {
 		return $posts[ 0 ];
 	}
 
+	public static function delete_instance_by_id( $instance_id ) {
+		$post_id = self::get_post_id_by_instance_id( $instance_id );
+		if ( $post_id ) {
+			if ( wp_delete_post( $post_id ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 
 new Store();

@@ -48,6 +48,7 @@ class AdminUI {
 		} );
 
 		add_action( 'admin_init', array( $this, 'handle_form_submission' ) );
+		add_action( 'admin_init', array( $this, 'handle_instance_deletion' ) );
 	}
 
 	private function add_admin_notice( $notice, $type ) {
@@ -233,7 +234,7 @@ class AdminUI {
 		?>
 		<div class="wrap">
 			<h1>Free My Site</h1>
-			<?php do_action( 'admin_notices' ); ?>
+			<?php //do_action( 'admin_notices' ); // admin notices showing up twice with this, need to figure out why ?>
 			<br/><br/>
 			<form method="POST" action="">
 				<table class="form-table" role="presentation">
@@ -258,6 +259,52 @@ class AdminUI {
 					echo $whatcms_api_key_supplied ? '' : 'disabled' ?>>
 				</p>
 			</form>
+			<?php if ( Store::has_instances() ) { ?>
+				<br><br><br>
+				<h2>Resume previous attempts</h2>
+				<table class="wp-list-table widefat fixed striped table-view-list">
+					<thead>
+					<tr>
+						<th scope="col" id="instance_id" class="manage-column column-primary">Instance ID</th>
+						<th scope="col" id="website" class="manage-column column-status">Website</th>
+						<th scope="col" id="action" class="manage-column column-next_steps">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+					<?php foreach ( Store::get_all_instances() as $instance ) { ?>
+						<tr id="instance-<?php echo $instance[ 'id' ]; ?>">
+							<td class="column-primary">
+								<pre><?php echo $instance[ 'instance_id' ]; ?></pre>
+							</td>
+							<td class="column-status">
+								<pre><?php echo $instance[ 'site_url' ] ?></pre>
+							</td>
+							<td class="column-action">
+								<a href="<?php echo esc_attr( admin_url( 'tools.php?page=free-my-site-page&instance=' . $instance[ 'instance_id' ] ) ); ?>">
+									<span class="button button-secondary">
+										Resume
+									</span>
+								</a>
+								<form action="" method="POST" style="display: inline-block;">
+									<input type="hidden" name="instance_id_to_delete"
+										   value="<?php echo $instance[ 'instance_id' ] ?>"/>
+									<?php wp_nonce_field( 'free_my_site_instance_del', 'nonce' ); ?>
+									<input type="submit" class="button button-link-delete" name="delete_instance"
+										   value="Delete"/>
+								</form>
+							</td>
+						</tr>
+					<?php } ?>
+					</tbody>
+					<tfoot>
+					<tr>
+						<th scope="col" id="instance_id" class="manage-column column-primary">Instance ID</th>
+						<th scope="col" id="website" class="manage-column column-status">Website</th>
+						<th scope="col" id="action" class="manage-column column-next_steps">Action</th>
+					</tr>
+					</tfoot>
+				</table>
+			<?php } ?>
 		</div>
 		<?php
 	}
@@ -269,7 +316,7 @@ class AdminUI {
 			return; // no business
 		}
 
-		if ( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' ) {
+		if ( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' || ! isset( $_POST[ 'submit_url' ] ) ) {
 			return;
 		}
 
@@ -360,5 +407,47 @@ class AdminUI {
 	private function fetch_guide( $guide_url ) : string {
 		$guide = new GuideSourcing\HTTPSourcer( $guide_url );
 		return $guide->fetch();
+	}
+
+	public function handle_instance_deletion() {
+		global $pagenow;
+
+		if ( $pagenow != 'tools.php' || ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] != self::ADMIN_PAGE_SLUG ) ) {
+			return; // no business
+		}
+
+		if ( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' || ! isset( $_POST[ 'delete_instance' ] ) ) {
+			return;
+		}
+
+		// nonce verification
+		if ( ! isset( $_POST[ 'nonce' ] ) || ! wp_verify_nonce( $_POST[ 'nonce' ], 'free_my_site_instance_del' ) ) {
+			$this->add_admin_notice(
+				[
+					'Sorry but it could not be verified that the request came from a legitimate action',
+					'Please try again.'
+				],
+				'error'
+			);
+			return;
+		}
+
+		$instance_id = $_POST[ 'instance_id_to_delete' ];
+
+		if ( ! Store::delete_instance_by_id( $instance_id ) ) {
+			$this->add_admin_notice( 'Failed to delete instance.', 'error' );
+			return;
+		}
+
+		// instance deleted, redirect now
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page' => self::ADMIN_PAGE_SLUG,
+				),
+				admin_url( 'tools.php' ),
+			)
+		);
+		die();
 	}
 }
