@@ -83,7 +83,7 @@ class AdminUI {
 		}
 		?>
 		<div class="wrap">
-			<h2>Free My Site</h2>
+			<h1>Free My Site</h1>
 			<?php do_action( 'admin_notices' ) ?>
 			<?php if ( ! empty( $details ) ) { ?>
 				<p>Let's follow the guide shown below:</p>
@@ -232,19 +232,30 @@ class AdminUI {
 		$whatcms_api_key_supplied = defined( 'WHATCMS_API_KEY' ) && ! empty( WHATCMS_API_KEY );
 		?>
 		<div class="wrap">
-			<h2>Free My Site</h2>
+			<h1>Free My Site</h1>
 			<?php do_action( 'admin_notices' ); ?>
 			<br/><br/>
 			<form method="POST" action="">
+				<table class="form-table" role="presentation">
+					<tbody>
+					<tr>
+						<th scope="row">
+							<label for="site_url">Your Website URL</label>
+						</th>
+						<td>
+							<input type="text" name="site_url" id="site_url" required value="<?php
+							echo ! empty( $_REQUEST[ 'site_url' ] ) ? esc_url( $_REQUEST[ 'site_url' ] ) : ''; ?>">
+							<p class="description" id="tagline-description">
+								<?php echo __( 'Please enter URL for your website that you want to migrate.', 'free-my-site' ); ?>
+							</p>
+						</td>
+					</tr>
+					</tbody>
+				</table>
 				<?php wp_nonce_field( 'free_my_site_input', 'nonce' ); ?>
-				<label for="site_url">Enter your website URL:</label>
-				<input type="text" name="site_url" id="site_url" value="<?php
-				echo ! empty( $_REQUEST[ 'site_url' ] ) ? esc_url( $_REQUEST[ 'site_url' ] ) : ''; ?>"
-					   required>
 				<p class="submit">
-					<input type="submit" name="submit_url" <?php
-					echo $whatcms_api_key_supplied ? '' : 'disabled' ?> class="button button-primary"
-						   value="Submit">
+					<input type="submit" name="submit_url" value="Submit" class="button button-primary" <?php
+					echo $whatcms_api_key_supplied ? '' : 'disabled' ?>>
 				</p>
 			</form>
 		</div>
