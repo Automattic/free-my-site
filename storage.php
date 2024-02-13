@@ -57,7 +57,7 @@ class Store {
 		return $instance_id;
 	}
 
-	public static function get_instance_details( $instance_id ) {
+	public static function get_instance_details( $instance_id ) : array {
 		$post_id = self::get_post_id_by_instance_id( $instance_id );
 		if ( false === $post_id ) {
 			return [];
