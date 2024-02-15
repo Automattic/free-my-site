@@ -220,7 +220,9 @@ class AdminUI {
 				✨ &nbsp;<a target="_blank" href="<?php echo $install_link ?>"><strong>Install this plugin</strong></a>
 				<?php
 			}
+
 		} else if ( false !== stripos( $section[ 'heading_content' ], 'Upload' ) ) {
+
 			if ( false !== stripos( $section[ 'heading_content' ], 'WXR' ) ) {
 				?>🔼 &nbsp;<a target="_blank" href="<?php echo admin_url( 'admin.php?import=wordpress' ) ?>"><strong>Upload
 						WXR</strong></a><?php
@@ -229,10 +231,12 @@ class AdminUI {
 			}
 
 		} else if ( false !== stripos( $section[ 'heading_content' ], 'Connect' ) ) {
+
 			if ( false !== stripos( $section[ 'heading_content' ], 'Tumblr' ) ) {
 				?>↔️ &nbsp;<a target="_blank" href="<?php echo admin_url( 'admin.php?import=tumblr' ) ?>"><strong>Connect
 						To Tumblr</strong></a><?php
 			}
+
 		}
 	}
 
