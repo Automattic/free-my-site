@@ -203,6 +203,8 @@ class AdminUI {
 			// figure out which plugin
 			if ( strpos( $section[ 'heading_content' ], 'WordPress Importer' ) ) {
 				$plugin_slug = 'wordpress-importer';
+			} else if ( $cms == 'tumblr' && stripos( $section[ 'heading_content' ], 'importer' ) ) {
+				$plugin_slug = 'tumblr-importer';
 			}
 
 			if ( empty( $plugin_slug ) ) {
@@ -226,6 +228,11 @@ class AdminUI {
 				?><a href="<?php echo admin_url( 'admin.php?import=wordpress' ) ?>"></a><?php
 			}
 
+		} else if ( false !== stripos( $section[ 'heading_content' ], 'Connect' ) ) {
+			if ( false !== stripos( $section[ 'heading_content' ], 'Tumblr' ) ) {
+				?>↔️ &nbsp;<a target="_blank" href="<?php echo admin_url( 'admin.php?import=tumblr' ) ?>"><strong>Connect
+						To Tumblr</strong></a><?php
+			}
 		}
 	}
 
