@@ -255,8 +255,10 @@ class AdminUI {
 							<label for="site_url">Your Website URL</label>
 						</th>
 						<td>
-							<input type="text" name="site_url" id="site_url" required value="<?php
-							echo ! empty( $_REQUEST[ 'site_url' ] ) ? esc_url( $_REQUEST[ 'site_url' ] ) : ''; ?>">
+							<input type="text" name="site_url" id="site_url" required
+								   value="<?php if ( isset( $_REQUEST[ 'site_url' ] ) ) {
+									   echo esc_url( $_REQUEST[ 'site_url' ] );
+								   } ?>">
 							<p class="description" id="tagline-description">
 								<?php echo __( 'Please enter URL for your website that you want to migrate.', 'free-my-site' ); ?>
 							</p>
