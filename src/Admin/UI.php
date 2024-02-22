@@ -255,7 +255,7 @@ class UI {
 							<label for="site_url">Your Website URL</label>
 						</th>
 						<td>
-							<input type="text" name="site_url" id="site_url" required
+							<input type="text" name="site_url" id="site_url" required class="regular-text"
 								   value="<?php if ( isset( $_REQUEST[ 'site_url' ] ) ) {
 									   echo esc_url( $_REQUEST[ 'site_url' ] );
 								   } ?>">
