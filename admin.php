@@ -7,6 +7,7 @@ use DotOrg\FreeMySite\CMSDetection\Whatcms_Detector;
 use DotOrg\FreeMySite\GuideSourcing;
 use DotOrg\FreeMySite\Plugin\Manager;
 use DotOrg\FreeMySite\Storage\Store;
+use Parsedown;
 
 class AdminUI {
 	const ADMIN_PAGE_SLUG = 'free-my-site-page';
@@ -24,7 +25,7 @@ class AdminUI {
 	];
 
 	public function __construct() {
-		$this->markdown_parser = new \ParseDown();
+		$this->markdown_parser = new ParseDown();
 
 		// add page under Tools menu
 		add_action( 'admin_menu', function() {

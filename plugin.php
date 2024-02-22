@@ -7,7 +7,7 @@ Author: DotOrg
 */
 
 
-require_once( plugin_dir_path( __FILE__ ) . 'includes/parsedown.php' ); // markdown parsing lib
+require_once( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'admin.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'storage.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'cms-detection.php' );
