@@ -16,7 +16,7 @@ class Store {
 					),
 					'public'              => false,
 					'has_archive'         => false,
-					'show_ui'             => defined( 'WP_DEBUG' ) && WP_DEBUG,
+					'show_ui'             => false,
 					'exclude_from_search' => true,
 					'supports'            => array( 'title', 'editor', 'custom-fields', 'comments' )
 				)

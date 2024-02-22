@@ -1,8 +1,8 @@
 <?php
 
-namespace DotOrg\FreeMySite\Plugin;
+namespace DotOrg\FreeMySite\Admin;
 
-class Manager {
+class PluginManager {
 	/**
 	 * Function to get the clickable installation link to install a plugin based on its slug on WP.org plugins repo
 	 *

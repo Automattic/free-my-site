@@ -1,12 +1,12 @@
 {
-    "name": "ashfame/free-my-site",
+    "name": "dotorg/free-my-site",
     "type": "project",
     "require": {
         "erusev/parsedown": "^1.7"
     },
     "autoload": {
         "psr-4": {
-            "Ashfame\\FreeMySite\\": "src/"
+            "DotOrg\\FreeMySite\\": "src/"
         }
     }
 }

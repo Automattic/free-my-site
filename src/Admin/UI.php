@@ -1,26 +1,25 @@
 <?php
 
-namespace DotOrg\FreeMySite\UI;
+namespace DotOrg\FreeMySite\Admin;
 
 use DotOrg\FreeMySite;
-use DotOrg\FreeMySite\CMSDetection\Whatcms_Detector;
+use DotOrg\FreeMySite\CMSDetection\WhatcmsDetector;
 use DotOrg\FreeMySite\GuideSourcing;
-use DotOrg\FreeMySite\Plugin\Manager;
 use DotOrg\FreeMySite\Storage\Store;
 use Parsedown;
 
-class AdminUI {
+class UI {
 	const ADMIN_PAGE_SLUG = 'free-my-site-page';
-	private $markdown_parser;
+	private Parsedown $markdown_parser;
 
-	private $guides = [
+	private array $guides = [
 		'squarespace' => 'https://raw.githubusercontent.com/WordPress/data-liberation/trunk/guides/squarespace-to-wordpress.md',
 		'tumblr'      => 'https://raw.githubusercontent.com/WordPress/data-liberation/trunk/guides/tumblr-to-wordpress.md',
 		'wix'         => 'https://raw.githubusercontent.com/WordPress/data-liberation/trunk/guides/wix-to-wordpress.md',
 		'wordpress'   => 'https://raw.githubusercontent.com/WordPress/data-liberation/trunk/guides/wordpress-to-wordpress.md',
 	];
 
-	private $other_guides = [
+	private array $alt_guides = [
 		'rss' => 'https://raw.githubusercontent.com/WordPress/data-liberation/trunk/guides/rss-to-wordpress.md',
 	];
 
@@ -89,7 +88,7 @@ class AdminUI {
 			<?php do_action( 'admin_notices' ) ?>
 			<?php if ( ! empty( $details ) ) { ?>
 				<p>Let's follow the guide shown below:</p>
-				<?php $this->display_steps( GuideSourcing\parse_guide( $details[ 'markdown_guide' ] ), $details ); ?>
+				<?php $this->display_steps( GuideSourcing\GuideParser::parse( $details[ 'markdown_guide' ] ), $details ); ?>
 			<?php } ?>
 		</div>
 		<?php
@@ -212,7 +211,7 @@ class AdminUI {
 				return;
 			}
 
-			$plugin_manager = new Manager();
+			$plugin_manager = new PluginManager();
 			if ( $plugin_manager->is_installed( $plugin_slug ) ) {
 				?>✅ Already installed!<?php
 			} else {
@@ -388,7 +387,7 @@ class AdminUI {
 			return false;
 		}
 
-		// Remove all illegal characters from a url
+		// Remove all illegal characters from an url
 		$url = filter_var( $site_url, FILTER_SANITIZE_URL );
 
 		$valid_url      = filter_var( $url, FILTER_VALIDATE_URL );
@@ -398,7 +397,7 @@ class AdminUI {
 	}
 
 	private function detect_cms( $site_url ) : string {
-		$d      = new Whatcms_Detector( WHATCMS_API_KEY );
+		$d      = new WhatcmsDetector( WHATCMS_API_KEY );
 		$result = $d->run( $site_url );
 
 		if ( $result->success ) {

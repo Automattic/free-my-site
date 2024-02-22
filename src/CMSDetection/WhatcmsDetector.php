@@ -2,23 +2,12 @@
 
 namespace DotOrg\FreeMySite\CMSDetection;
 
-interface Detector {
-	public function run( $url ) : Result;
-}
-
-class Result {
-	public bool $success;
-	public string $reason;
-	public string $cms;
-	public string $cms_version;
-}
-
 /**
  * Detection powered by Whatcms.org API
  *
  * API is also capable of returning the software version number
  */
-class Whatcms_Detector implements Detector {
+class WhatcmsDetector implements Detector {
 	private string $apiKey;
 
 	public function __construct( $apiKey ) {
