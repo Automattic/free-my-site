@@ -298,7 +298,8 @@ class UI {
 										Resume
 									</span>
 								</a>
-								<form action="" method="POST" style="display: inline-block;">
+								<form action="" method="POST" style="display: inline-block;"
+									  onsubmit="return confirm('Are you sure you want to delete this instance?');">
 									<input type="hidden" name="instance_id_to_delete"
 										   value="<?php echo $instance[ 'instance_id' ] ?>"/>
 									<?php wp_nonce_field( 'free_my_site_instance_del', 'nonce' ); ?>
