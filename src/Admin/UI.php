@@ -3,7 +3,8 @@
 namespace DotOrg\FreeMySite\Admin;
 
 use DotOrg\FreeMySite;
-use DotOrg\FreeMySite\CMSDetection\WhatcmsDetector;
+use DotOrg\FreeMySite\CMSDetection\{ConfidenceScoreDetector, WhatcmsDetector};
+use DotOrg\FreeMySite\CMSDetection\Result as CMSDetectionResult;
 use DotOrg\FreeMySite\GuideSourcing;
 use DotOrg\FreeMySite\Storage\Store;
 use Parsedown;
@@ -355,11 +356,13 @@ class UI {
 
 		$site_url = $_POST[ 'site_url' ]; // passed validation above, so safe to use
 
-		$cms = $this->detect_cms( $site_url );
-		if ( empty( $cms ) ) {
-			$this->add_admin_notice( 'Failed to identify CMS.', 'error' );
+		$cms_detect_result = $this->detect_cms( $site_url );
+		if ( ! $cms_detect_result->success ) {
+			$this->add_admin_notice( 'Failed to identify CMS: ' . $cms_detect_result->note, 'error' );
 			return;
 		}
+
+		$cms = $cms_detect_result->cms;
 
 		$guide_url      = $this->get_guide_url_for_cms( $cms );
 		$markdown_guide = $this->fetch_guide( $guide_url );
@@ -397,15 +400,15 @@ class UI {
 		return $valid_http_url;
 	}
 
-	private function detect_cms( $site_url ) : string {
-		$d      = new WhatcmsDetector( WHATCMS_API_KEY );
+	private function detect_cms( $site_url ) : CMSDetectionResult {
+		$d      = new ConfidenceScoreDetector();
 		$result = $d->run( $site_url );
-
 		if ( $result->success ) {
-			return $result->cms;
+			return $result;
 		}
 
-		return '';
+		$d = new WhatcmsDetector( WHATCMS_API_KEY );
+		return $d->run( $site_url );
 	}
 
 	public function get_guide_url_for_cms( $cms ) : string {
